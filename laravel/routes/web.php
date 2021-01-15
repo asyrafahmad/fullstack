@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/testpage', function () {
+    return view('welcome');
+});
+
+Route::get('/new', 'TestController@controllerMethod');
+
+Route::any('{slug}', function(){
     return view('welcome');
 });
