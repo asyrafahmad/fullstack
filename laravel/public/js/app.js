@@ -2062,6 +2062,7 @@ __webpack_require__.r(__webpack_exports__);
       'post': 'this is the blog post 4',
       id: 4
     }];
+    this.blogs = posts;
   }
 });
 
@@ -35640,7 +35641,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 
 
 
-var routes = [{
+var routes = [/// project routes.
+/// basic tutorials routes.
+{
   path: '/my-new-vue-route',
   name: 'my-new-vue-route',
   component: _components_pages_myFirstVuePage__WEBPACK_IMPORTED_MODULE_2__["default"]
