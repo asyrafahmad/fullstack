@@ -1,8 +1,13 @@
 ~ npm run dev
+~ npm run watch
 ~ php artisan serve --port=8080 = http://127.0.0.1:8080/hooks
 ~ npm install view-design --save                                        (Add IView vue)
 
-
+~ php artisan make:model Blog -m
+~ php artisan migrate
+~ php artisan migrate up
+~ php artisan migrate down
+~ php artisan make:controller AdminController
 
 ------------------------------------------------------------------------------
 3rd party

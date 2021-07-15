@@ -15,7 +15,7 @@ import home from './components/pages/home'
 import tags from './components/pages/tags'
 
 const routes = [
-    /// project routes.
+    /// project routes pages.
     {
         path: '/',
         name: 'home',

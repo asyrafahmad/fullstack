@@ -13,12 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/testpage', function () {
-    return view('welcome');
-});
+Route::post('app/create_tag', 'AdminController@addTag');
+Route::get('app/get_tags', 'AdminController@getTag');
 
 Route::get('/new', 'TestController@controllerMethod');
 
-Route::any('{slug}', function(){
+Route::any('{slug}', function () {
     return view('welcome');
 });
