@@ -26,7 +26,7 @@
 								<td class="_table_name">{{tag.tagName}}</td>
 								<td>{{tag.created_at}}</td>
 								<td>
-									<Button type="info" size="small">Edit</Button>
+									<Button type="info" size="small" @click="showEditModal(tag, i)">Edit</Button>
 									<Button type="error" size="small">Delete</Button>
 								</td>
 							</tr>
@@ -36,12 +36,23 @@
 					</div>
 				</div>
 
+                <!-- tag add modal -->
                 <Modal v-model="addModal" title="Add tag" :mask-closable="false" :closeable="false" >
                     <input v-model="data.tagName" placeholder="Add tag name" style="width: 300px" />
 
                     <div slot="footer">
                         <Button type="default" @click="addModal=false">Close</Button>
                         <Button type="primary" @click="addTag" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Adding...' : 'Add Tag'}}</Button>
+                    </div>
+                </Modal>
+
+                <!-- tag edit modal -->
+                <Modal v-model="editModal" title="Edit tag" :mask-closable="false" :closeable="false" >
+                    <input v-model="editData.tagName" placeholder="Edit tag name" style="width: 300px" />
+
+                    <div slot="footer">
+                        <Button type="default" @click="editModal=false">Close</Button>
+                        <Button type="primary" @click="editTag" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Editing...' : 'Edit Tag'}}</Button>
                     </div>
                 </Modal>
 
@@ -57,12 +68,17 @@ export default {
 
     data(){
         return {
-            data : {
+            data: {
                 tagName: ''
             },
             addModal: false,
+            editModal: false,
             isAdding: false,
-            tags: []
+            tags: [],
+            editData:{
+                tagName: '',
+            },
+            index: -1,
         }
     },
 
@@ -70,19 +86,65 @@ export default {
         async addTag(){
 
             if(this.data.tagName.trim()==''){
-                return this.e('Tag name is required')
+                return this.error('Tag name is required')
             }
 
             const res = await this.callApi('post','app/create_tag', this.data)
 
             if(res.status === 200){
-                this.tags.unshift(res.data)
+                this.tags.unshift(res.data)                          // array unshift
                 this.success('Tag has been added successfully')
                 this.addModal = false
             }
             else{
-                this.swr()
+                if(res.status == 422){
+                    console.log(res.data.errors.tagName);
+
+                    if(res.data.errors.tagName){
+                        this.error(res.data.errors.tagName[0])
+                    }
+                }
+                else{
+                    this.swr()
+                }
             }
+        },
+        async editTag(){
+
+            if(this.editData.tagName.trim()==''){
+                return this.error('Tag name is required');
+            }
+
+            const res = await this.callApi('post','app/edit_tag', this.editData);
+
+            if(res.status === 200){
+                this.tags[this.index].tagName = this.editData.tagName;
+                this.success('Tag has been edited successfully');
+                this.editModal = false;
+            }
+            else{
+                if(res.status == 422){
+                    console.log(res.data.errors.tagName);
+
+                    if(res.data.errors.tagName){
+                        this.error(res.data.errors.tagName[0]);
+                    }
+                }
+                else{
+                    this.swr();
+                }
+            }
+        },
+
+        showEditModal(tag, index){
+            let obj = {
+                id : tag.id,
+                tagName : tag.tagName
+            }
+
+            this.editData = obj;
+            this.editModal = true;
+            this.index = index;
         }
     },
 

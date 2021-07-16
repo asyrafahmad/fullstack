@@ -21,25 +21,25 @@ export default {
             }
         },
 
-        i (desc, title="Hey"){
+        info (desc, title="Hey"){
             this.$Notice.info({
                 title: title,
                 desc: desc
             });
         },
-        s (desc, title="Great!"){
+        success (desc, title="Great!"){
             this.$Notice.success({
                 title: title,
                 desc: desc
             });
         },
-        w (desc, title="Opps!"){
+        warning (desc, title="Opps!"){
             this.$Notice.warning({
                 title: title,
                 desc: desc
             });
         },
-        e (desc, title="Hey!"){
+        error (desc, title="Hey!"){
             this.$Notice.error({
                 title: title,
                 desc: desc

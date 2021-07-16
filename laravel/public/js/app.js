@@ -2191,6 +2191,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2198,8 +2209,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         tagName: ''
       },
       addModal: false,
+      editModal: false,
       isAdding: false,
-      tags: []
+      tags: [],
+      editData: {
+        tagName: ''
+      },
+      index: -1
     };
   },
   methods: {
@@ -2217,7 +2233,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   break;
                 }
 
-                return _context.abrupt("return", _this.e('Tag name is required'));
+                return _context.abrupt("return", _this.error('Tag name is required'));
 
               case 2:
                 _context.next = 4;
@@ -2227,13 +2243,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 res = _context.sent;
 
                 if (res.status === 200) {
-                  _this.tags.unshift(res.data);
+                  _this.tags.unshift(res.data); // array unshift
+
 
                   _this.success('Tag has been added successfully');
 
                   _this.addModal = false;
                 } else {
-                  _this.swr();
+                  if (res.status == 422) {
+                    console.log(res.data.errors.tagName);
+
+                    if (res.data.errors.tagName) {
+                      _this.error(res.data.errors.tagName[0]);
+                    }
+                  } else {
+                    _this.swr();
+                  }
                 }
 
               case 6:
@@ -2243,27 +2268,85 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
+    },
+    editTag: function editTag() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!(_this2.editData.tagName.trim() == '')) {
+                  _context2.next = 2;
+                  break;
+                }
+
+                return _context2.abrupt("return", _this2.error('Tag name is required'));
+
+              case 2:
+                _context2.next = 4;
+                return _this2.callApi('post', 'app/edit_tag', _this2.editData);
+
+              case 4:
+                res = _context2.sent;
+
+                if (res.status === 200) {
+                  _this2.tags[_this2.index].tagName = _this2.editData.tagName;
+
+                  _this2.success('Tag has been edited successfully');
+
+                  _this2.editModal = false;
+                } else {
+                  if (res.status == 422) {
+                    console.log(res.data.errors.tagName);
+
+                    if (res.data.errors.tagName) {
+                      _this2.error(res.data.errors.tagName[0]);
+                    }
+                  } else {
+                    _this2.swr();
+                  }
+                }
+
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    showEditModal: function showEditModal(tag, index) {
+      var obj = {
+        id: tag.id,
+        tagName: tag.tagName
+      };
+      this.editData = obj;
+      this.editModal = true;
+      this.index = index;
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
-    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
       var res;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context3.prev = _context3.next) {
             case 0:
-              _context2.next = 2;
-              return _this2.callApi('get', 'app/get_tags');
+              _context3.next = 2;
+              return _this3.callApi('get', 'app/get_tags');
 
             case 2:
-              res = _context2.sent;
+              res = _context3.sent;
 
               if (res.status === 200) {
-                _this2.tags = res.data;
+                _this3.tags = res.data;
               } else {
-                _this2.swr();
+                _this3.swr();
               } // const res = await this.callApi('post', '/app/create_tag', {tagName: 'testtag'});
               // if(res.status==200){
               //     console.log(res)
@@ -2276,10 +2359,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 4:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
-      }, _callee2);
+      }, _callee3);
     }))();
   }
 });
@@ -68219,7 +68302,14 @@ var render = function() {
                           [
                             _c(
                               "Button",
-                              { attrs: { type: "info", size: "small" } },
+                              {
+                                attrs: { type: "info", size: "small" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.showEditModal(tag, i)
+                                  }
+                                }
+                              },
                               [_vm._v("Edit")]
                             ),
                             _vm._v(" "),
@@ -68307,6 +68397,80 @@ var render = function() {
                       on: { click: _vm.addTag }
                     },
                     [_vm._v(_vm._s(_vm.isAdding ? "Adding..." : "Add Tag"))]
+                  )
+                ],
+                1
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "Modal",
+            {
+              attrs: {
+                title: "Edit tag",
+                "mask-closable": false,
+                closeable: false
+              },
+              model: {
+                value: _vm.editModal,
+                callback: function($$v) {
+                  _vm.editModal = $$v
+                },
+                expression: "editModal"
+              }
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.editData.tagName,
+                    expression: "editData.tagName"
+                  }
+                ],
+                staticStyle: { width: "300px" },
+                attrs: { placeholder: "Edit tag name" },
+                domProps: { value: _vm.editData.tagName },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.editData, "tagName", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                { attrs: { slot: "footer" }, slot: "footer" },
+                [
+                  _c(
+                    "Button",
+                    {
+                      attrs: { type: "default" },
+                      on: {
+                        click: function($event) {
+                          _vm.editModal = false
+                        }
+                      }
+                    },
+                    [_vm._v("Close")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "Button",
+                    {
+                      attrs: {
+                        type: "primary",
+                        disabled: _vm.isAdding,
+                        loading: _vm.isAdding
+                      },
+                      on: { click: _vm.editTag }
+                    },
+                    [_vm._v(_vm._s(_vm.isAdding ? "Editing..." : "Edit Tag"))]
                   )
                 ],
                 1
@@ -83735,14 +83899,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -83757,7 +83918,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default()({
+                return axios({
                   method: method,
                   url: url,
                   data: dataObj
@@ -83780,28 +83941,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee, null, [[0, 6]]);
       }))();
     },
-    i: function i(desc) {
+    info: function info(desc) {
       var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "Hey";
       this.$Notice.info({
         title: title,
         desc: desc
       });
     },
-    s: function s(desc) {
+    success: function success(desc) {
       var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "Great!";
       this.$Notice.success({
         title: title,
         desc: desc
       });
     },
-    w: function w(desc) {
+    warning: function warning(desc) {
       var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "Opps!";
       this.$Notice.warning({
         title: title,
         desc: desc
       });
     },
-    e: function e(desc) {
+    error: function error(desc) {
       var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "Hey!";
       this.$Notice.error({
         title: title,
