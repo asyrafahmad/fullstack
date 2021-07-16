@@ -27,7 +27,7 @@
 								<td>{{tag.created_at}}</td>
 								<td>
 									<Button type="info" size="small" @click="showEditModal(tag, i)">Edit</Button>
-									<Button type="error" size="small">Delete</Button>
+									<Button type="error" size="small" @click="showDeletingModal(tag, i)" :loading="tag.isDeleting">Delete</Button>
 								</td>
 							</tr>
 								<!-- ITEMS -->
@@ -56,6 +56,20 @@
                     </div>
                 </Modal>
 
+                 <!-- delete alert modal -->
+                <Modal v-model="showDeleteModal" width="360" >
+                    <p slot="header" style="color:#f60;text-align:center">
+                        <Icon type="ios-information-circle"></Icon>
+                        <span>Delete confirmation</span>
+                    </p>
+                    <div>
+                        <p>Are you sure want to delete tag?</p>
+                    </div>
+                    <div slot="footer">
+                        <Button type="error" size="large" long :loading="showDeleteModal" :disabled="showDeleteModal" @click="deleteTag">Delete</Button>
+                    </div>
+                </Modal>
+
 
 			</div>
 		</div>
@@ -79,6 +93,10 @@ export default {
                 tagName: '',
             },
             index: -1,
+            showDeleteModal: false,
+            deleteItem: {
+
+            }
         }
     },
 
@@ -145,6 +163,28 @@ export default {
             this.editData = obj;
             this.editModal = true;
             this.index = index;
+        },
+
+        async deleteTag(tag, index){
+            if(!confirm('Are you sure want to delete this tag?')){
+
+                this.$set(tag, 'isDeleting', true);                                 // buffering before deleting
+
+                const res = await this.callApi('post', 'app/delete_tag', tag)
+                if(res.status === 200){
+                    this.tags.splice(index,1)
+                    this.success('Tag has been deleted succesfully')
+                }
+                else{
+                    this.swr();
+                }
+            }
+        },
+
+        showDeletingModal(tag, index){
+            this.deleteItem = tag
+            this.index = index
+            this.showDeleteModal = true
         }
     },
 
