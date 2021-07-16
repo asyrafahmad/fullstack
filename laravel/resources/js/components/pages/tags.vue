@@ -66,7 +66,7 @@
                         <p>Are you sure want to delete tag?</p>
                     </div>
                     <div slot="footer">
-                        <Button type="error" size="large" long :loading="showDeleteModal" :disabled="showDeleteModal" @click="deleteTag">Delete</Button>
+                        <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete</Button>
                     </div>
                 </Modal>
 
@@ -94,9 +94,9 @@ export default {
             },
             index: -1,
             showDeleteModal: false,
-            deleteItem: {
-
-            }
+            isDeleting: false,
+            deleteItem: {},
+            deletingIndex: -1
         }
     },
 
@@ -165,25 +165,27 @@ export default {
             this.index = index;
         },
 
-        async deleteTag(tag, index){
-            if(!confirm('Are you sure want to delete this tag?')){
+        async deleteTag(){
 
-                this.$set(tag, 'isDeleting', true);                                 // buffering before deleting
+            this.isDeleting = true
+            // this.$set(tag, 'isDeleting', true);                                 // buffering before deleting
 
-                const res = await this.callApi('post', 'app/delete_tag', tag)
-                if(res.status === 200){
-                    this.tags.splice(index,1)
-                    this.success('Tag has been deleted succesfully')
-                }
-                else{
-                    this.swr();
-                }
+            const res = await this.callApi('post', 'app/delete_tag', this.deleteItem)
+            if(res.status === 200){
+                this.tags.splice(this.deletingIndex,1)
+                this.success('Tag has been deleted succesfully')
             }
+            else{
+                this.swr();
+            }
+
+            this.isDeleting = false
+            this.showDeleteModal = true
         },
 
         showDeletingModal(tag, index){
             this.deleteItem = tag
-            this.index = index
+            this.deletingIndex = index
             this.showDeleteModal = true
         }
     },

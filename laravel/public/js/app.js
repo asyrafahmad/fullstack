@@ -2231,7 +2231,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       index: -1,
       showDeleteModal: false,
-      deleteItem: {}
+      isDeleting: false,
+      deleteItem: {},
+      deletingIndex: -1
     };
   },
   methods: {
@@ -2343,7 +2345,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.editModal = true;
       this.index = index;
     },
-    deleteTag: function deleteTag(tag, index) {
+    deleteTag: function deleteTag() {
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
@@ -2352,29 +2354,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                if (confirm('Are you sure want to delete this tag?')) {
-                  _context3.next = 6;
-                  break;
-                }
+                _this3.isDeleting = true; // this.$set(tag, 'isDeleting', true);                                 // buffering before deleting
 
-                _this3.$set(tag, 'isDeleting', true); // buffering before deleting
+                _context3.next = 3;
+                return _this3.callApi('post', 'app/delete_tag', _this3.deleteItem);
 
-
-                _context3.next = 4;
-                return _this3.callApi('post', 'app/delete_tag', tag);
-
-              case 4:
+              case 3:
                 res = _context3.sent;
 
                 if (res.status === 200) {
-                  _this3.tags.splice(index, 1);
+                  _this3.tags.splice(_this3.deletingIndex, 1);
 
                   _this3.success('Tag has been deleted succesfully');
                 } else {
                   _this3.swr();
                 }
 
-              case 6:
+                _this3.isDeleting = false;
+                _this3.showDeleteModal = true;
+
+              case 7:
               case "end":
                 return _context3.stop();
             }
@@ -2384,7 +2383,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     showDeletingModal: function showDeletingModal(tag, index) {
       this.deleteItem = tag;
-      this.index = index;
+      this.deletingIndex = index;
       this.showDeleteModal = true;
     }
   },
@@ -68592,8 +68591,8 @@ var render = function() {
                         type: "error",
                         size: "large",
                         long: "",
-                        loading: _vm.showDeleteModal,
-                        disabled: _vm.showDeleteModal
+                        loading: _vm.isDeleting,
+                        disabled: _vm.isDeleting
                       },
                       on: { click: _vm.deleteTag }
                     },
