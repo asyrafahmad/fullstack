@@ -50,4 +50,17 @@ class AdminController extends Controller
     {
         return Tag::orderBy('id', 'desc')->get();
     }
+
+    public function upload(Request $request)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:jpeg,jpg,png'
+        ]);
+
+        $picName =  time() . '.' . $request->file->extension();
+        // TODO: put in storage folder for more secure
+        $request->file->move(public_path('uploads'), $picName);
+
+        return $picName;
+    }
 }

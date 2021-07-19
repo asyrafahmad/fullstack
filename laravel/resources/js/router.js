@@ -10,9 +10,10 @@ import newRoutePage from './components/pages/newRoutePage'
 import hooks from './components/pages/basic/hooks.vue'
 import methods from './components/pages/basic/methods.vue'
 
-/// project pages.
+/// admin project pages.
 import home from './components/pages/home'
-import tags from './components/pages/tags'
+import tags from './admin/pages/tags'
+import category from './admin/pages/category'
 
 const routes = [
     /// project routes pages.
@@ -25,6 +26,11 @@ const routes = [
         path: '/tags',
         name: 'tags',
         component: tags,
+    },
+    {
+        path: '/category',
+        name: 'category',
+        component: category,
     },
 
 
