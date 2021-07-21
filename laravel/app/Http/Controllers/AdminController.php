@@ -63,4 +63,24 @@ class AdminController extends Controller
 
         return $picName;
     }
+
+    public function deleteImage(Request $request)
+    {
+        $fileName = $request->imageName;
+        $this->deleteFileFromServer($fileName);
+
+        return 'done delete image';
+    }
+
+    public function deleteFileFromServer($fileName)
+    {
+        // TODO: delete file from storage folder
+        $filePath = public_path() . '/uploads/' . $fileName;
+
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        return;
+    }
 }
