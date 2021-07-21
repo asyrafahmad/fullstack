@@ -2097,7 +2097,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
-    addTag: function addTag() {
+    addCategory: function addCategory() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -2106,40 +2106,56 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!(_this.data.tagName.trim() == '')) {
+                if (!(_this.data.categoryName.trim() == '')) {
                   _context.next = 2;
                   break;
                 }
 
-                return _context.abrupt("return", _this.error('Tag name is required'));
+                return _context.abrupt("return", _this.error('Category is required'));
 
               case 2:
-                _context.next = 4;
-                return _this.callApi('post', 'app/create_tag', _this.data);
+                if (!(_this.data.iconImage.trim() == '')) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.error('Icon image is required'));
 
               case 4:
+                _context.next = 6;
+                return _this.callApi('post', 'app/create_category', _this.data);
+
+              case 6:
                 res = _context.sent;
 
-                if (res.status === 200) {
+                if (res.status === 201) {
                   _this.tags.unshift(res.data); // array unshift
 
 
-                  _this.success('Tag has been added successfully');
+                  _this.success('Category has been added successfully');
 
                   _this.addModal = false;
+                  _this.data.categoryName = '';
+                  _this.data.iconImage = '';
                 } else {
                   if (res.status == 422) {
-                    console.log(res.data.errors.tagName);
+                    console.log('Adding' + res.data.errors.categoryName); // adding category validation
 
-                    if (res.data.errors.tagName) {
-                      _this.error(res.data.errors.tagName[0]);
+                    console.log('Adding' + res.data.errors.iconImage); // adding icon image validation
+
+                    if (res.data.errors.categoryName) {
+                      _this.error(res.data.errors.categoryName[0]);
+                    }
+
+                    if (res.data.errors.iconImage) {
+                      _this.error(res.data.errors.iconImage[0]);
                     }
                   } else {
                     _this.swr();
                   }
                 }
 
-              case 6:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -68065,11 +68081,11 @@ var render = function() {
               _c("Input", {
                 attrs: { placeholder: "Add category name" },
                 model: {
-                  value: _vm.data.tagName,
+                  value: _vm.data.categoryName,
                   callback: function($$v) {
-                    _vm.$set(_vm.data, "tagName", $$v)
+                    _vm.$set(_vm.data, "categoryName", $$v)
                   },
-                  expression: "data.tagName"
+                  expression: "data.categoryName"
                 }
               }),
               _vm._v(" "),
@@ -68157,9 +68173,13 @@ var render = function() {
                         disabled: _vm.isAdding,
                         loading: _vm.isAdding
                       },
-                      on: { click: _vm.addTag }
+                      on: { click: _vm.addCategory }
                     },
-                    [_vm._v(_vm._s(_vm.isAdding ? "Adding..." : "Add Tag"))]
+                    [
+                      _vm._v(
+                        _vm._s(_vm.isAdding ? "Adding..." : "Add Category")
+                      )
+                    ]
                   )
                 ],
                 1

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Tag;
+use App\Category;
 
 class AdminController extends Controller
 {
@@ -82,5 +83,18 @@ class AdminController extends Controller
         }
 
         return;
+    }
+    public function addCategory(Request $request)
+    {
+        //validate request
+        $this->validate($request, [
+            'categoryName' => 'required',
+            'iconImage' => 'required'
+        ]);
+
+        return Category::create([
+            'categoryName' => $request->categoryName,
+            'iconImage' => $request->iconImage
+        ]);
     }
 }
