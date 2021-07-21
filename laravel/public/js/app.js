@@ -2121,7 +2121,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       deleteItem: {},
       deletingIndex: -1,
       token: '',
-      isIconImageNew: false
+      isIconImageNew: false,
+      isEditingItem: false
     };
   },
   methods: {
@@ -2192,7 +2193,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    editTag: function editTag() {
+    editCategory: function editCategory() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
@@ -2201,39 +2202,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(_this2.editData.tagName.trim() == '')) {
+                if (!(_this2.editData.categoryName.trim() == '')) {
                   _context2.next = 2;
                   break;
                 }
 
-                return _context2.abrupt("return", _this2.error('Tag name is required'));
+                return _context2.abrupt("return", _this2.error('Category is required'));
 
               case 2:
-                _context2.next = 4;
-                return _this2.callApi('post', 'app/edit_tag', _this2.editData);
+                if (!(_this2.editData.iconImage.trim() == '')) {
+                  _context2.next = 4;
+                  break;
+                }
+
+                return _context2.abrupt("return", _this2.error('Icon image is required'));
 
               case 4:
+                _context2.next = 6;
+                return _this2.callApi('post', 'app/edit_category', _this2.editData);
+
+              case 6:
                 res = _context2.sent;
 
                 if (res.status === 200) {
-                  _this2.tags[_this2.index].tagName = _this2.editData.tagName;
+                  _this2.categoryLists[_this2.index].categoryName = _this2.editData.categoryName;
 
-                  _this2.success('Tag has been edited successfully');
+                  _this2.success('Category has been edited successfully');
 
                   _this2.editModal = false;
                 } else {
                   if (res.status == 422) {
-                    console.log(res.data.errors.tagName);
+                    console.log(res.data.errors.categoryName);
 
-                    if (res.data.errors.tagName) {
-                      _this2.error(res.data.errors.tagName[0]);
+                    if (res.data.errors.categoryName) {
+                      _this2.error(res.data.errors.categoryName[0]);
+                    }
+
+                    if (res.data.errors.iconImage) {
+                      _this2.error(res.data.errors.iconImage[0]);
                     }
                   } else {
                     _this2.swr();
                   }
                 }
 
-              case 6:
+              case 8:
               case "end":
                 return _context2.stop();
             }
@@ -2245,6 +2258,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.editData = category;
       this.editModal = true;
       this.index = index;
+      this.isEditingItem = true;
     },
     deleteTag: function deleteTag() {
       var _this3 = this;
@@ -2288,6 +2302,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.showDeleteModal = true;
     },
     handleSuccess: function handleSuccess(res, file) {
+      res = "/uploads/".concat(res);
+
+      if (this.isEditingItem) {
+        return this.editData.iconImage = res;
+      }
+
       this.data.iconImage = res;
     },
     handleError: function handleError(res, file) {
@@ -2321,16 +2341,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context4.prev = _context4.next) {
               case 0:
                 isAdd = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : true;
-                console.log('delete image ' + _this4.data.iconImage);
-                image = _this4.data.iconImage;
-                _this4.data.iconImage = '';
-                _this4.$refs.uploads.clearFiles;
-                _context4.next = 7;
+
+                if (!isAdd) {
+                  //for editing....
+                  _this4.isIconImageNew = true;
+                  image = _this4.editData.iconImage;
+                  _this4.editData.iconImage = '';
+
+                  _this4.$refs.editDataUploads.clearFiles();
+                } else {
+                  console.log('delete image ' + _this4.data.iconImage);
+                  image = _this4.data.iconImage;
+                  _this4.data.iconImage = '';
+
+                  _this4.$refs.uploads.clearFiles(); // clearFiles() is laravel function
+
+                }
+
+                _context4.next = 4;
                 return _this4.callApi('post', 'app/delete_image', {
                   imageName: image
                 });
 
-              case 7:
+              case 4:
                 res = _context4.sent;
 
                 if (res.status != 200) {
@@ -2341,13 +2374,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this4.success('Image is succesfully deleted!');
                 }
 
-              case 9:
+              case 6:
               case "end":
                 return _context4.stop();
             }
           }
         }, _callee4);
       }))();
+    },
+    closeEditModal: function closeEditModal() {
+      this.isEditingItem = false;
+      this.editModal = false;
     }
   },
   created: function created() {
@@ -68031,7 +68068,9 @@ var render = function() {
                         _c("td", [_vm._v(_vm._s(category.id))]),
                         _vm._v(" "),
                         _c("td", { staticClass: "table_image" }, [
-                          _c("img", { attrs: { src: category.iconImage } })
+                          _c("img", {
+                            attrs: { src: category.iconImage, alt: "Image" }
+                          })
                         ]),
                         _vm._v(" "),
                         _c("td", { staticClass: "table_image" }, [
@@ -68231,11 +68270,11 @@ var render = function() {
               _c("Input", {
                 attrs: { placeholder: "Add category name" },
                 model: {
-                  value: _vm.data.categoryName,
+                  value: _vm.editData.categoryName,
                   callback: function($$v) {
-                    _vm.$set(_vm.data, "categoryName", $$v)
+                    _vm.$set(_vm.editData, "categoryName", $$v)
                   },
-                  expression: "data.categoryName"
+                  expression: "editData.categoryName"
                 }
               }),
               _vm._v(" "),
@@ -68252,7 +68291,7 @@ var render = function() {
                       expression: "isIconImageNew"
                     }
                   ],
-                  ref: "uploads",
+                  ref: "editDataUploads",
                   attrs: {
                     multiple: "",
                     type: "drag",
@@ -68296,7 +68335,11 @@ var render = function() {
                       [
                         _c("Icon", {
                           attrs: { type: "ios-trash-outline" },
-                          on: { click: _vm.deleteImage }
+                          on: {
+                            click: function($event) {
+                              return _vm.deleteImage(false)
+                            }
+                          }
                         })
                       ],
                       1
@@ -68312,11 +68355,7 @@ var render = function() {
                     "Button",
                     {
                       attrs: { type: "default" },
-                      on: {
-                        click: function($event) {
-                          _vm.editModal = false
-                        }
-                      }
+                      on: { click: _vm.closeEditModal }
                     },
                     [_vm._v("Close")]
                   ),
@@ -68329,9 +68368,13 @@ var render = function() {
                         disabled: _vm.isAdding,
                         loading: _vm.isAdding
                       },
-                      on: { click: _vm.editTag }
+                      on: { click: _vm.editCategory }
                     },
-                    [_vm._v(_vm._s(_vm.isAdding ? "Editing..." : "Edit Tag"))]
+                    [
+                      _vm._v(
+                        _vm._s(_vm.isAdding ? "Editing..." : "Edit Category")
+                      )
+                    ]
                   )
                 ],
                 1

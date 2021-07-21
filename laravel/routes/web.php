@@ -21,6 +21,7 @@ Route::post('app/upload', 'AdminController@upload');
 Route::post('app/delete_image', 'AdminController@deleteImage');
 Route::post('app/create_category', 'AdminController@addCategory');
 Route::get('app/get_categories', 'AdminController@getCategories');
+Route::post('app/edit_category', 'AdminController@editCategory');
 
 Route::get('/new', 'TestController@controllerMethod');
 
