@@ -14,9 +14,15 @@ import methods from './components/pages/basic/methods.vue'
 import home from './components/pages/home'
 import tags from './admin/pages/tags'
 import category from './admin/pages/category'
+import useComp from './vuex/useComp'
 
 const routes = [
     /// project routes pages.
+    {
+        path: '/testUseComp',
+        name: 'useComp',
+        component: useComp,
+    },
     {
         path: '/',
         name: 'home',
