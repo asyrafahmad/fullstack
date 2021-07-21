@@ -36,7 +36,7 @@
 
                 <!-- picture add modal -->
                 <Modal v-model="addModal" title="Add tag" :mask-closable="false" :closeable="false" >
-                    <Input v-model="data.tagName" placeholder="Add category name" />
+                    <Input v-model="data.categoryName" placeholder="Add category name" />
                     <div class="space"></div>
                     <Upload
                         ref="uploads"
@@ -63,7 +63,7 @@
                     </div>
                     <div slot="footer">
                         <Button type="default" @click="addModal=false">Close</Button>
-                        <Button type="primary" @click="addTag" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Adding...' : 'Add Tag'}}</Button>
+                        <Button type="primary" @click="addCategory" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Adding...' : 'Add Category'}}</Button>
                     </div>
                 </Modal>
 
@@ -123,25 +123,35 @@ export default {
     },
 
     methods:  {
-        async addTag(){
+        async addCategory(){
 
-            if(this.data.tagName.trim()==''){
-                return this.error('Tag name is required')
+            if(this.data.categoryName.trim()==''){
+                return this.error('Category is required')
             }
 
-            const res = await this.callApi('post','app/create_tag', this.data)
+            if(this.data.iconImage.trim()==''){
+                return this.error('Icon image is required')
+            }
 
-            if(res.status === 200){
-                this.tags.unshift(res.data)                          // array unshift
-                this.success('Tag has been added successfully')
+            const res = await this.callApi('post','app/create_category', this.data)
+
+            if(res.status === 20){
+                this.tags.unshift(res.data)                                                                 // array unshift
+                this.success('Category has been added successfully')
                 this.addModal = false
+                this.data.categoryName = ''
+                this.data.iconImage = ''
             }
             else{
                 if(res.status == 422){
-                    console.log(res.data.errors.tagName);
+                    console.log('Adding' + res.data.errors.categoryName);                                   // adding category validation
+                    console.log('Adding' + res.data.errors.iconImage);                                      // adding icon image validation
 
-                    if(res.data.errors.tagName){
-                        this.error(res.data.errors.tagName[0])
+                    if(res.data.errors.categoryName){
+                        this.error(res.data.errors.categoryName[0])
+                    }
+                    if(res.data.errors.iconImage){
+                        this.error(res.data.errors.iconImage[0])
                     }
                 }
                 else{
