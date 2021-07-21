@@ -2,7 +2,7 @@
     <div>
         <div class="content">
 			<div class="container-fluid">
-                <h1>i will show how all others components react to changes</h1>
+                <h1>I will show how all others components react to changes</h1>
                 <h2>The master component :  {{$store.state.counter}}</h2>
             </div>
             <div>
@@ -24,6 +24,7 @@
 import compA from './compA';
 import compB from './compB';
 import compC from './compC';
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
 
@@ -31,8 +32,19 @@ export default {
         return {}
     },
     methods: {
+        ...mapActions([
+            'changeCounterAction'
+        ])
+    },
+    computed : {
+        ...mapGetters({
+            'counter' : 'getCounter'
+        })
+    },
+    methods: {
         changeCounter(){
-            this.$store.commit('changeTheCounter', 1)
+            this.$store.dispatch('changeCounterAction',1)
+            // this.$store.commit('changeTheCounter', 1)
         }
     },
     created(){

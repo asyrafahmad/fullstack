@@ -2903,6 +2903,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _compA__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./compA */ "./resources/js/vuex/compA.vue");
 /* harmony import */ var _compB__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./compB */ "./resources/js/vuex/compB.vue");
 /* harmony import */ var _compC__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./compC */ "./resources/js/vuex/compC.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2924,6 +2931,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 
@@ -2931,9 +2939,12 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {};
   },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_3__["mapGetters"])({
+    'counter': 'getCounter'
+  })),
   methods: {
     changeCounter: function changeCounter() {
-      this.$store.commit('changeTheCounter', 1);
+      this.$store.dispatch('changeCounterAction', 1); // this.$store.commit('changeTheCounter', 1)
     }
   },
   created: function created() {
@@ -69727,7 +69738,7 @@ var render = function() {
       [
         _c("div", { staticClass: "container-fluid" }, [
           _c("h1", [
-            _vm._v("i will show how all others components react to changes")
+            _vm._v("I will show how all others components react to changes")
           ]),
           _vm._v(" "),
           _c("h2", [
@@ -87106,11 +87117,20 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
   state: {
     counter: 1000
   },
+  getters: {
+    getCOunter: function getCOunter(state) {
+      return state.counter;
+    }
+  },
   mutations: {
     changeTheCounter: function changeTheCounter(state, data) {
-      console.log(state);
-      console.log(data);
       state.counter += data;
+    }
+  },
+  actions: {
+    changeCounterAction: function changeCounterAction(_ref, data) {
+      var commit = _ref.commit;
+      commit('changeTheCounter', data);
     }
   }
 }));
