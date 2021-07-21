@@ -3,7 +3,7 @@
         <div class="content">
 			<div class="container-fluid">
                 <h1>I will show how all others components react to changes</h1>
-                <h2>The master component :  {{$store.state.counter}}</h2>
+                <h2>The master component :  {{counter}}</h2>
             </div>
             <div>
                 <compA></compA>

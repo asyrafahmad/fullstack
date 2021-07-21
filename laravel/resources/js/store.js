@@ -8,7 +8,7 @@ export default new Vuex.Store({
         counter: 1000
     },
     getters: {
-        getCOunter(state) {
+        getCounter(state) {
             return state.counter
         }
     },

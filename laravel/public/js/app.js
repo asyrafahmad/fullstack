@@ -2904,6 +2904,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _compB__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./compB */ "./resources/js/vuex/compB.vue");
 /* harmony import */ var _compC__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./compC */ "./resources/js/vuex/compC.vue");
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+var _data$methods$compute;
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2935,27 +2937,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-/* harmony default export */ __webpack_exports__["default"] = ({
+/* harmony default export */ __webpack_exports__["default"] = (_data$methods$compute = {
   data: function data() {
     return {};
   },
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_3__["mapActions"])(['changeCounterAction'])),
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_3__["mapGetters"])({
     'counter': 'getCounter'
-  })),
-  methods: {
-    changeCounter: function changeCounter() {
-      this.$store.dispatch('changeCounterAction', 1); // this.$store.commit('changeTheCounter', 1)
-    }
-  },
-  created: function created() {
-    console.log(this.$store.state.counter);
-  },
-  components: {
-    compA: _compA__WEBPACK_IMPORTED_MODULE_0__["default"],
-    compB: _compB__WEBPACK_IMPORTED_MODULE_1__["default"],
-    compC: _compC__WEBPACK_IMPORTED_MODULE_2__["default"]
+  }))
+}, _defineProperty(_data$methods$compute, "methods", {
+  changeCounter: function changeCounter() {
+    this.$store.dispatch('changeCounterAction', 1); // this.$store.commit('changeTheCounter', 1)
   }
-});
+}), _defineProperty(_data$methods$compute, "created", function created() {
+  console.log(this.$store.state.counter);
+}), _defineProperty(_data$methods$compute, "components", {
+  compA: _compA__WEBPACK_IMPORTED_MODULE_0__["default"],
+  compB: _compB__WEBPACK_IMPORTED_MODULE_1__["default"],
+  compC: _compC__WEBPACK_IMPORTED_MODULE_2__["default"]
+}), _data$methods$compute);
 
 /***/ }),
 
@@ -69640,10 +69640,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("h1", [
-      _vm._v(
-        "I am component A and the counter is : " +
-          _vm._s(_vm.$store.state.counter)
-      )
+      _vm._v("I am component A and the counter is : " + _vm._s(_vm.counter))
     ])
   ])
 }
@@ -69741,11 +69738,7 @@ var render = function() {
             _vm._v("I will show how all others components react to changes")
           ]),
           _vm._v(" "),
-          _c("h2", [
-            _vm._v(
-              "The master component :  " + _vm._s(_vm.$store.state.counter)
-            )
-          ])
+          _c("h2", [_vm._v("The master component :  " + _vm._s(_vm.counter))])
         ]),
         _vm._v(" "),
         _c("div", [_c("compA")], 1),
@@ -87118,7 +87111,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
     counter: 1000
   },
   getters: {
-    getCOunter: function getCOunter(state) {
+    getCounter: function getCounter(state) {
       return state.counter;
     }
   },
