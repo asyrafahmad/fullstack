@@ -97,4 +97,9 @@ class AdminController extends Controller
             'iconImage' => $request->iconImage
         ]);
     }
+
+    public function getCategories()
+    {
+        return Category::orderBy('id', 'desc')->get();
+    }
 }

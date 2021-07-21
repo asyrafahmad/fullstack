@@ -2074,6 +2074,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2084,16 +2110,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       addModal: false,
       editModal: false,
       isAdding: false,
-      tags: [],
+      categoryLists: [],
       editData: {
-        tagName: ''
+        iconImage: '',
+        categoryName: ''
       },
       index: -1,
       showDeleteModal: false,
       isDeleting: false,
       deleteItem: {},
       deletingIndex: -1,
-      token: ''
+      token: '',
+      isIconImageNew: false
     };
   },
   methods: {
@@ -2122,10 +2150,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _context.abrupt("return", _this.error('Icon image is required'));
 
               case 4:
-                _context.next = 6;
+                _this.data.iconImage = '/uploads/${this.data.iconImage}';
+                _context.next = 7;
                 return _this.callApi('post', 'app/create_category', _this.data);
 
-              case 6:
+              case 7:
                 res = _context.sent;
 
                 if (res.status === 201) {
@@ -2155,7 +2184,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   }
                 }
 
-              case 8:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -2212,12 +2241,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    showEditModal: function showEditModal(tag, index) {
-      var obj = {
-        id: tag.id,
-        tagName: tag.tagName
-      };
-      this.editData = obj;
+    showEditModal: function showEditModal(category, index) {
+      this.editData = category;
       this.editModal = true;
       this.index = index;
     },
@@ -2286,24 +2311,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     deleteImage: function deleteImage() {
-      var _this4 = this;
+      var _arguments = arguments,
+          _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-        var image, res;
+        var isAdd, image, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                isAdd = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : true;
                 console.log('delete image ' + _this4.data.iconImage);
                 image = _this4.data.iconImage;
                 _this4.data.iconImage = '';
                 _this4.$refs.uploads.clearFiles;
-                _context4.next = 6;
+                _context4.next = 7;
                 return _this4.callApi('post', 'app/delete_image', {
                   imageName: image
                 });
 
-              case 6:
+              case 7:
                 res = _context4.sent;
 
                 if (res.status != 200) {
@@ -2314,7 +2341,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this4.success('Image is succesfully deleted!');
                 }
 
-              case 8:
+              case 9:
               case "end":
                 return _context4.stop();
             }
@@ -2334,24 +2361,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               _this5.token = window.Laravel.csrfToken;
               _context5.next = 3;
-              return _this5.callApi('get', 'app/get_tags');
+              return _this5.callApi('get', 'app/get_categories');
 
             case 3:
               res = _context5.sent;
 
               if (res.status === 200) {
-                _this5.tags = res.data;
+                _this5.categoryLists = res.data;
               } else {
                 _this5.swr();
-              } // const res = await this.callApi('post', '/app/create_tag', {tagName: 'testtag'});
-              // if(res.status==200){
-              //     console.log(res)
-              // }
-              // else{
-              //     console.log(res);
-              //     console.log('running')
-              // }
-
+              }
 
             case 5:
             case "end":
@@ -68007,15 +68026,19 @@ var render = function() {
                   [
                     _vm._m(0),
                     _vm._v(" "),
-                    _vm._l(_vm.tags, function(tag, i) {
+                    _vm._l(_vm.categoryLists, function(category, i) {
                       return _c("tr", { key: i }, [
-                        _c("td", [_vm._v(_vm._s(tag.id))]),
+                        _c("td", [_vm._v(_vm._s(category.id))]),
                         _vm._v(" "),
-                        _c("td", { staticClass: "_table_name" }, [
-                          _vm._v(_vm._s(tag.tagName))
+                        _c("td", { staticClass: "table_image" }, [
+                          _c("img", { attrs: { src: category.iconImage } })
                         ]),
                         _vm._v(" "),
-                        _c("td", [_vm._v(_vm._s(tag.created_at))]),
+                        _c("td", { staticClass: "table_image" }, [
+                          _vm._v(_vm._s(category.categoryName))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(category.created_at))]),
                         _vm._v(" "),
                         _c(
                           "td",
@@ -68026,7 +68049,7 @@ var render = function() {
                                 attrs: { type: "info", size: "small" },
                                 on: {
                                   click: function($event) {
-                                    return _vm.showEditModal(tag, i)
+                                    return _vm.showEditModal(category, i)
                                   }
                                 }
                               },
@@ -68039,11 +68062,11 @@ var render = function() {
                                 attrs: {
                                   type: "error",
                                   size: "small",
-                                  loading: tag.isDeleting
+                                  loading: category.isDeleting
                                 },
                                 on: {
                                   click: function($event) {
-                                    return _vm.showDeletingModal(tag, i)
+                                    return _vm.showDeletingModal(category, i)
                                   }
                                 }
                               },
@@ -68065,7 +68088,7 @@ var render = function() {
             "Modal",
             {
               attrs: {
-                title: "Add tag",
+                title: "Add category",
                 "mask-closable": false,
                 closeable: false
               },
@@ -68192,7 +68215,7 @@ var render = function() {
             "Modal",
             {
               attrs: {
-                title: "Edit tag",
+                title: "Edit category",
                 "mask-closable": false,
                 closeable: false
               },
@@ -68205,27 +68228,81 @@ var render = function() {
               }
             },
             [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.editData.tagName,
-                    expression: "editData.tagName"
-                  }
-                ],
-                staticStyle: { width: "300px" },
-                attrs: { placeholder: "Edit tag name" },
-                domProps: { value: _vm.editData.tagName },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.editData, "tagName", $event.target.value)
-                  }
+              _c("Input", {
+                attrs: { placeholder: "Add category name" },
+                model: {
+                  value: _vm.data.categoryName,
+                  callback: function($$v) {
+                    _vm.$set(_vm.data, "categoryName", $$v)
+                  },
+                  expression: "data.categoryName"
                 }
               }),
+              _vm._v(" "),
+              _c("div", { staticClass: "space" }),
+              _vm._v(" "),
+              _c(
+                "Upload",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.isIconImageNew,
+                      expression: "isIconImageNew"
+                    }
+                  ],
+                  ref: "uploads",
+                  attrs: {
+                    multiple: "",
+                    type: "drag",
+                    headers: {
+                      "x-csrf-token": _vm.token,
+                      "X-Requested-With": "XMLHttpRequest"
+                    },
+                    "on-success": _vm.handleSuccess,
+                    "on-error": _vm.handleError,
+                    "on-format-error": _vm.handleFormatError,
+                    "on-exceeded-size": _vm.handleMaxSize,
+                    format: ["jpg", "jpeg", "png"],
+                    "max-size": 2048,
+                    action: "/app/upload"
+                  }
+                },
+                [
+                  _c(
+                    "div",
+                    { staticStyle: { padding: "20px 0" } },
+                    [
+                      _c("Icon", {
+                        staticStyle: { color: "#3399ff" },
+                        attrs: { type: "ios-cloud-upload", size: "52" }
+                      }),
+                      _vm._v(" "),
+                      _c("p", [_vm._v("Click or drag files here to upload")])
+                    ],
+                    1
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm.editData.iconImage
+                ? _c("div", { staticClass: "demo-upload-list" }, [
+                    _c("img", { attrs: { src: "" + _vm.editData.iconImage } }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "demo-upload-list-cover" },
+                      [
+                        _c("Icon", {
+                          attrs: { type: "ios-trash-outline" },
+                          on: { click: _vm.deleteImage }
+                        })
+                      ],
+                      1
+                    )
+                  ])
+                : _vm._e(),
               _vm._v(" "),
               _c(
                 "div",
@@ -68259,7 +68336,8 @@ var render = function() {
                 ],
                 1
               )
-            ]
+            ],
+            1
           ),
           _vm._v(" "),
           _c(
@@ -68331,7 +68409,9 @@ var staticRenderFns = [
     return _c("tr", [
       _c("th", [_vm._v("ID")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Tag Name")]),
+      _c("th", [_vm._v("Icon Image")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Category Name")]),
       _vm._v(" "),
       _c("th", [_vm._v("Created At")]),
       _vm._v(" "),

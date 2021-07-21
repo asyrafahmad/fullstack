@@ -12,21 +12,23 @@
 								<!-- TABLE TITLE -->
 							<tr>
 								<th>ID</th>
-								<th>Tag Name</th>
+								<th>Icon Image</th>
+								<th>Category Name</th>
 								<th>Created At</th>
 								<th>Action</th>
 							</tr>
 								<!-- TABLE TITLE -->
 
 								<!-- ITEMS -->
-							<!-- <tr v-for="(tag,i) in tags" :key="i" v-if="tags.length"> -->
-							<tr v-for="(tag,i) in tags" :key="i" >
-								<td>{{tag.id}}</td>
-								<td class="_table_name">{{tag.tagName}}</td>
-								<td>{{tag.created_at}}</td>
+							<!-- <tr v-for="(category,i) in categoryLists" :key="i" v-if="categoryLists.length"> -->
+							<tr v-for="(category,i) in categoryLists" :key="i" >
+								<td>{{category.id}}</td>
+                                <td class="table_image"><img :src="category.iconImage" /></td>
+								<td class="table_image">{{category.categoryName}}</td>
+								<td>{{category.created_at}}</td>
 								<td>
-									<Button type="info" size="small" @click="showEditModal(tag, i)">Edit</Button>
-									<Button type="error" size="small" @click="showDeletingModal(tag, i)" :loading="tag.isDeleting">Delete</Button>
+									<Button type="info" size="small" @click="showEditModal(category, i)">Edit</Button>
+									<Button type="error" size="small" @click="showDeletingModal(category, i)" :loading="category.isDeleting">Delete</Button>
 								</td>
 							</tr>
 							    <!-- ITEMS -->
@@ -35,7 +37,7 @@
 				</div>
 
                 <!-- picture add modal -->
-                <Modal v-model="addModal" title="Add tag" :mask-closable="false" :closeable="false" >
+                <Modal v-model="addModal" title="Add category" :mask-closable="false" :closeable="false" >
                     <Input v-model="data.categoryName" placeholder="Add category name" />
                     <div class="space"></div>
                     <Upload
@@ -67,10 +69,34 @@
                     </div>
                 </Modal>
 
-                <!-- tag edit modal -->
-                <Modal v-model="editModal" title="Edit tag" :mask-closable="false" :closeable="false" >
-                    <input v-model="editData.tagName" placeholder="Edit tag name" style="width: 300px" />
-
+                <!-- picture edit modal -->
+                <Modal v-model="editModal" title="Edit category" :mask-closable="false" :closeable="false" >
+                    <Input v-model="data.categoryName" placeholder="Add category name" />
+                    <div class="space"></div>
+                    <Upload
+                        v-show="isIconImageNew"
+                        ref="uploads"
+                        multiple
+                        type="drag"
+                        :headers="{'x-csrf-token' : token, 'X-Requested-With' : 'XMLHttpRequest'}"
+                        :on-success="handleSuccess"
+                        :on-error="handleError"
+                        :on-format-error="handleFormatError"
+                        :on-exceeded-size="handleMaxSize"
+                        :format="['jpg','jpeg','png']"
+                        :max-size="2048"
+                        action="/app/upload">
+                        <div style="padding: 20px 0">
+                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                            <p>Click or drag files here to upload</p>
+                        </div>
+                    </Upload>
+                    <div class="demo-upload-list" v-if="editData.iconImage">
+                         <img :src="`${editData.iconImage}`" />                                                                                                <!-- find ` symbol function  -->
+                        <div class="demo-upload-list-cover">
+                            <Icon type="ios-trash-outline" @click="deleteImage"></Icon>
+                        </div>
+                    </div>
                     <div slot="footer">
                         <Button type="default" @click="editModal=false">Close</Button>
                         <Button type="primary" @click="editTag" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Editing...' : 'Edit Tag'}}</Button>
@@ -109,16 +135,18 @@ export default {
             addModal: false,
             editModal: false,
             isAdding: false,
-            tags: [],
+            categoryLists: [],
             editData:{
-                tagName: '',
+                iconImage: '',
+                categoryName: ''
             },
             index: -1,
             showDeleteModal: false,
             isDeleting: false,
             deleteItem: {},
             deletingIndex: -1,
-            token: ''
+            token: '',
+            isIconImageNew: false
         }
     },
 
@@ -133,9 +161,11 @@ export default {
                 return this.error('Icon image is required')
             }
 
+            this.data.iconImage = '/uploads/${this.data.iconImage}';
+
             const res = await this.callApi('post','app/create_category', this.data)
 
-            if(res.status === 20){
+            if(res.status === 201){
                 this.tags.unshift(res.data)                                                                 // array unshift
                 this.success('Category has been added successfully')
                 this.addModal = false
@@ -186,13 +216,8 @@ export default {
             }
         },
 
-        showEditModal(tag, index){
-            let obj = {
-                id : tag.id,
-                tagName : tag.tagName
-            }
-
-            this.editData = obj;
+        showEditModal(category, index){
+            this.editData = category;
             this.editModal = true;
             this.index = index;
         },
@@ -245,7 +270,7 @@ export default {
             });
         },
 
-        async deleteImage(){
+        async deleteImage(isAdd = true){
             console.log('delete image ' + this.data.iconImage)
 
             let image = this.data.iconImage
@@ -265,24 +290,15 @@ export default {
     async created(){
 
         this.token = window.Laravel.csrfToken;
-        const res = await this.callApi('get','app/get_tags')
+        const res = await this.callApi('get','app/get_categories')
 
         if(res.status === 200){
-            this.tags = res.data
+            this.categoryLists = res.data
         }
         else{
             this.swr();
         }
 
-        // const res = await this.callApi('post', '/app/create_tag', {tagName: 'testtag'});
-
-        // if(res.status==200){
-        //     console.log(res)
-        // }
-        // else{
-        //     console.log(res);
-        //     console.log('running')
-        // }
     }
 }
 
