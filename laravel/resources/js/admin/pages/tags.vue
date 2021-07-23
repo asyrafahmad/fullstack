@@ -57,7 +57,7 @@
                 </Modal>
 
                  <!-- delete alert modal -->
-                <Modal v-model="showDeleteModal" width="360" >
+                <!-- <Modal v-model="showDeleteModal" width="360" >
                     <p slot="header" style="color:#f60;text-align:center">
                         <Icon type="ios-information-circle"></Icon>
                         <span>Delete confirmation</span>
@@ -68,9 +68,9 @@
                     <div slot="footer">
                         <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete</Button>
                     </div>
-                </Modal>
+                </Modal> -->
 
-
+                <deleteModal></deleteModal>
 			</div>
 		</div>
     </div>
@@ -78,6 +78,9 @@
 
 
 <script>
+import deleteModal from '../components/deleteModal.vue'
+import {mapGetters} from 'vuex'
+
 export default {
 
     data(){
@@ -109,7 +112,7 @@ export default {
 
             const res = await this.callApi('post','app/create_tag', this.data)
 
-            if(res.status === 200){
+            if(res.status === 200 || res.status === 201){
                 this.tags.unshift(res.data)                          // array unshift
                 this.success('Tag has been added successfully')
                 this.addModal = false
@@ -184,9 +187,20 @@ export default {
         },
 
         showDeletingModal(tag, index){
-            this.deleteItem = tag
-            this.deletingIndex = index
-            this.showDeleteModal = true
+
+            const deleteModalObj = {
+                showDeleteModal: true,
+                deleteUrl: 'app/delete_tag',
+                data : tag,
+                deletingIndex: index,
+                isDeleted: false
+            }
+            this.$store.commit('setDeletingModalObj', deleteModalObj)
+            console.log('delete modal obj')
+
+            // this.deleteItem = tag
+            // this.deletingIndex = index
+            // this.showDeleteModal = true
         }
     },
 
@@ -210,6 +224,23 @@ export default {
         //     console.log(res);
         //     console.log('running')
         // }
+    },
+
+    components: {
+        deleteModal
+    },
+
+    computed:{
+        ...mapGetters(['getDeleteModalObj'])
+    },
+    watch: {
+        getDeleteModalObj(obj){
+            console.log(obj)
+
+            if(obj.isDeleted){
+                this.tags.splice(obj.deletingIndex, 1)
+            }
+        }
     }
 }
 
