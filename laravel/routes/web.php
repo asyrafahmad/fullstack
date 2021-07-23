@@ -13,19 +13,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Tag
 Route::post('app/create_tag', 'AdminController@addTag');
 Route::get('app/get_tags', 'AdminController@getTag');
 Route::post('app/edit_tag', 'AdminController@editTag');
 Route::post('app/delete_tag', 'AdminController@deleteTag');
+// Category
 Route::post('app/upload', 'AdminController@upload');
 Route::post('app/delete_image', 'AdminController@deleteImage');
 Route::post('app/create_category', 'AdminController@addCategory');
 Route::get('app/get_categories', 'AdminController@getCategories');
 Route::post('app/edit_category', 'AdminController@editCategory');
 Route::post('app/delete_category', 'AdminController@deleteCategory');
+// User
+Route::post('app/create_users', 'AdminController@createUser');
+Route::get('app/get_users', 'AdminController@getUser');
+
 
 Route::get('/new', 'TestController@controllerMethod');
-
 Route::any('{slug}', function () {
     return view('welcome');
 });

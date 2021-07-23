@@ -13,4 +13,9 @@
 ------------------------------------------------------------------------------
 3rd party
 
-iview vue = https://www.iviewui.com/docs/introduce-en
+iview vue (FOR VUE) = https://www.iviewui.com/docs/introduce-en
+
+------------------------------------------------------------------------------
+
+FIX BUG
+1. in category -> delete category and add category picture

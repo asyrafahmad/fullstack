@@ -15,6 +15,7 @@ import home from './components/pages/home'
 import tags from './admin/pages/tags'
 import category from './admin/pages/category'
 import useComp from './vuex/useComp'
+import adminusers from './admin/pages/adminusers'
 
 const routes = [
     /// project routes pages.
@@ -37,6 +38,11 @@ const routes = [
         path: '/category',
         name: 'category',
         component: category,
+    },
+    {
+        path: '/adminusers',
+        name: 'adminusers',
+        component: adminusers,
     },
 
 
