@@ -8,7 +8,7 @@ export default new Vuex.Store({
         counter: 1000,
         //delete function
         deleteModalObj: {
-            shoeDeleteModal: false,
+            showDeleteModal: false,
             deleteUrl: '',
             data: null,
             deletingIndex: -1,

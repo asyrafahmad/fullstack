@@ -57,7 +57,7 @@
                         </div>
                     </Upload>
                     <div class="demo-upload-list" v-if="data.iconImage">
-                        <img :src="`/uploads/${data.iconImage}`" />
+                        <img :src="`${data.iconImage}`" />
                         <div class="demo-upload-list-cover">
                             <Icon type="ios-trash-outline" @click="deleteImage"></Icon>
                         </div>
@@ -102,19 +102,6 @@
                     </div>
                 </Modal>
 
-                 <!-- delete alert modal -->
-                <!-- <Modal v-model="showDeleteModal" width="360" >
-                    <p slot="header" style="color:#f60;text-align:center">
-                        <Icon type="ios-information-circle"></Icon>
-                        <span>Delete confirmation</span>
-                    </p>
-                    <div>
-                        <p>Are you sure want to delete tag?</p>
-                    </div>
-                    <div slot="footer">
-                        <Button type="error" size="large" long :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete</Button>
-                    </div>
-                </Modal> -->
                 <deleteModal></deleteModal>
 			</div>
 		</div>
@@ -164,12 +151,12 @@ export default {
                 return this.error('Icon image is required')
             }
 
-            this.data.iconImage = '/uploads/${this.data.iconImage}';
+            // this.data.iconImage = '/uploads/${this.data.iconImage}';
 
             const res = await this.callApi('post','app/create_category', this.data)
 
             if(res.status === 201){
-                this.tags.unshift(res.data)                                                                 // array unshift
+                this.categoryLists.unshift(res.data)                                                                 // array unshift
                 this.success('Category has been added successfully')
                 this.addModal = false
                 this.data.categoryName = ''
@@ -234,38 +221,17 @@ export default {
             this.isEditingItem = true;
         },
 
-        async deleteTag(){
-
-            this.isDeleting = true
-            // this.$set(tag, 'isDeleting', true);                                 // buffering before deleting
-
-            const res = await this.callApi('post', 'app/delete_tag', this.deleteItem)
-            if(res.status === 200){
-                this.tags.splice(this.deletingIndex,1)
-                this.success('Tag has been deleted succesfully')
-            }
-            else{
-                this.swr();
-            }
-
-            this.isDeleting = false
-            this.showDeleteModal = true
-        },
-
-        showDeletingModal(tag, index){
+        showDeletingModal(category, index){
             const deleteModalObj = {
-                shoeDeleteModal: true,
+                showDeleteModal: true,
                 deleteUrl: 'app/delete_category',
-                data: tag,
-                deletingIndex, index,
+                data: category,
+                deletingIndex: index,
                 isDeleted: false
             }
             this.$store.commit('setDeletingModalObj', deleteModalObj)
             console.log('delete modal obj')
 
-            // this.deleteItem = tag
-            // this.deletingIndex = index
-            // this.showDeleteModal = true
         },
 
         handleSuccess (res, file) {
@@ -311,7 +277,6 @@ export default {
                 this.$refs.uploads.clearFiles()                                                                 // clearFiles() is laravel function
             }
 
-
             const res = await this.callApi('post', 'app/delete_image', {imageName: image})
             if(res.status != 200){
                 this.data.iconImage = image
@@ -327,7 +292,6 @@ export default {
             this.editModal  = false;
         }
     },
-
     async created(){
 
         this.token = window.Laravel.csrfToken;
@@ -344,6 +308,18 @@ export default {
 
     components: {
         deleteModal
+    },
+    computed:{
+        ...mapGetters(['getDeleteModalObj'])
+    },
+    watch: {
+        getDeleteModalObj(obj){
+            console.log(obj)
+
+            if(obj.isDeleted){
+                this.categoryLists.splice(obj.deletingIndex, 1)
+            }
+        }
     }
 }
 
