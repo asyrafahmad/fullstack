@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Tag;
 use App\Category;
 use App\User;
@@ -181,5 +182,24 @@ class AdminController extends Controller
 
         $user = User::where('id', $request->id)->update($data);
         return $user;
+    }
+
+    public function adminLogin(Request $request)
+    {
+        //validate request
+        $this->validate($request, [
+            'email' => 'bail|required|email',
+            'password' => 'bail|required|min:6',
+        ]);
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'msg' => 'You are logged in',
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'Incorrect login details',
+            ], 401);
+        }
     }
 }
