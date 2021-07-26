@@ -27,7 +27,8 @@ Route::post('app/edit_category', 'AdminController@editCategory');
 Route::post('app/delete_category', 'AdminController@deleteCategory');
 // User
 Route::post('app/create_users', 'AdminController@createUser');
-Route::get('app/get_users', 'AdminController@getUser');
+Route::get('app/get_users', 'AdminController@getUsers');
+Route::post('app/edit_user', 'AdminController@editUser');
 
 
 Route::get('/new', 'TestController@controllerMethod');

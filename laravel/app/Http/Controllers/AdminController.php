@@ -138,7 +138,7 @@ class AdminController extends Controller
         // validate  request
         $this->validate($request, [
             'fullName' => 'required',
-            'email' => 'bail|required|email',
+            'email' => 'bail|required|email|unique:users',
             'password' => 'bail|required|min:6',
             'userType' => 'required',
         ]);
@@ -154,8 +154,32 @@ class AdminController extends Controller
 
         return $user;
     }
-    public function getUser(Request $request)
+    public function getUsers(Request $request)
     {
         return User::where('userType', '!=', 'User')->get();
+    }
+    public function editUser(Request $request)
+    {
+        //validate request
+        $this->validate($request, [
+            'fullName' => 'required',
+            'email' => "bail|required|email|unique:users,email,$request->id",
+            'password' => 'min:6',
+            'userType' => 'required'
+        ]);
+
+        $data = [
+            'fullName' => $request->fullName,
+            'email' => $request->email,
+            'userType' => $request->userType
+        ];
+
+        if ($request->password) {
+            $password = bcrypt($request->password);
+            $data['password'] = $password;
+        }
+
+        $user = User::where('id', $request->id)->update($data);
+        return $user;
     }
 }

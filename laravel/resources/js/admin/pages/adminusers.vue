@@ -40,7 +40,7 @@
 				</div>
 
                 <!-- tag add modal -->
-                <Modal v-model="addModal" title="Add admin" :mask-closable="false" :closeable="false" >
+                <Modal v-model="addModal" title="Add User" :mask-closable="false" :closeable="false" >
                     <div class="space">
                         <Input type="text" v-model="data.fullName" placeholder="Fullname"   />
                     </div>
@@ -65,12 +65,26 @@
                 </Modal>
 
                 <!-- tag edit modal -->
-                <Modal v-model="editModal" title="Edit tag" :mask-closable="false" :closeable="false" >
-                    <Input v-model="editData.tagName" placeholder="Edit tag name" style="width: 300px" />
+                <Modal v-model="editModal" title="Edit User" :mask-closable="false" :closeable="false" >
+                     <div class="space">
+                        <Input type="text" v-model="editData.fullName" placeholder="Fullname"   />
+                    </div>
+                    <div class="space">
+                        <Input type="email" v-model="editData.email" placeholder="Email" />
+                    </div>
+                    <div class="space">
+                        <Input type="password" v-model="editData.password" placeholder="Password" />
+                    </div>
+                    <div class="space">
+                        <Select v-model="editData.userType" placeholder="Select Admin Type">
+                            <Option value="Admin">Admin</Option>
+                            <Option value="Editor">Editor</Option>
+                        </Select>
+                    </div>
 
                     <div slot="footer">
                         <Button type="default" @click="editModal=false">Close</Button>
-                        <Button type="primary" @click="editTag" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Editing...' : 'Edit Tag'}}</Button>
+                        <Button type="primary" @click="editAdmin" :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Editing...' : 'Edit User'}}</Button>
                     </div>
                 </Modal>
 
@@ -100,7 +114,10 @@ export default {
             isAdding: false,
             users: [],
             editData:{
-                tagName: '',
+                fullName: '',
+                email: '',
+                password: '',
+                userType: 'Admin',
             },
             index: -1,
             showDeleteModal: false,
@@ -147,25 +164,29 @@ export default {
                 }
             }
         },
-        async editTag(){
+        async editAdmin(){
 
-            if(this.editData.tagName.trim()==''){
-                return this.error('Tag name is required');
+            if(this.editData.fullName.trim()==''){                  // fullname validation
+                return this.error('Full name is required')
+            }
+            if(this.editData.email.trim()==''){                     // email validation
+                return this.error('Email is required')
+            }
+            if(this.editData.userType.trim()==''){                  // user type validation
+                return this.error('User type is required')
             }
 
-            const res = await this.callApi('post','app/edit_tag', this.editData);
+            const res = await this.callApi('post','app/edit_user', this.editData);
 
             if(res.status === 200){
-                this.tags[this.index].tagName = this.editData.tagName;
-                this.success('Tag has been edited successfully');
+                this.users[this.index] = this.editData
+                this.success('User has been edited successfully');
                 this.editModal = false;
             }
             else{
                 if(res.status == 422){
-                    console.log(res.data.errors.tagName);
-
-                    if(res.data.errors.tagName){
-                        this.error(res.data.errors.tagName[0]);
+                    for(let i in res.data.errors){
+                        this.error(res.data.errors[i][0])
                     }
                 }
                 else{
@@ -174,10 +195,12 @@ export default {
             }
         },
 
-        showEditModal(tag, index){
+        showEditModal(user, index){
             let obj = {
-                id : tag.id,
-                tagName : tag.tagName
+                id : user.id,
+                fullName : user.fullName,
+                email : user.email,
+                password : user.password,
             }
 
             this.editData = obj;
