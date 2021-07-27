@@ -9,6 +9,7 @@
 ~ php artisan migrate up
 ~ php artisan migrate down
 ~ php artisan make:controller AdminController
+~ php artisan make:middleware AdminCheck
 
 ------------------------------------------------------------------------------
 3rd party
