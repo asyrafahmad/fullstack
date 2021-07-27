@@ -10,6 +10,7 @@
 ~ php artisan migrate down
 ~ php artisan make:controller AdminController
 ~ php artisan make:middleware AdminCheck
+~ php artisan make:model Role -m
 
 ------------------------------------------------------------------------------
 3rd party
