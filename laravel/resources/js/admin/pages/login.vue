@@ -42,6 +42,7 @@ export default {
 
             if(res.status === 200){
                 this.success(res.data.msg)
+                window.location = '/'
             }
             else{
                 if(res.status === 401){

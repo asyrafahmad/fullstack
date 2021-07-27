@@ -19,3 +19,18 @@ iview vue (FOR VUE) = https://www.iviewui.com/docs/introduce-en
 
 FIX BUG
 1. in category -> delete category and add category picture
+
+------------------------------------------------------------------------------
+Learning
+
+1. created
+2. computed         // getters
+3. components       // components
+4. methods
+5. watch
+
+Store
+1. state
+2. getters
+3. mutations
+4. actions

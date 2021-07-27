@@ -2978,6 +2978,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 if (res.status === 200) {
                   _this.success(res.data.msg);
+
+                  window.location = '/';
                 } else {
                   if (res.status === 401) {
                     _this.info(res.data.msg);
@@ -3402,11 +3404,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['user'],
   data: function data() {
     return {
       isLoggedIn: false
     };
+  },
+  created: function created() {
+    this.$store.commit('updateUser', this.user);
+    console.log(this.user);
   }
 });
 
@@ -70064,7 +70072,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm.isLoggedIn
+      _vm.$store.state.user
         ? _c("div", [
             _c("div", { staticClass: "_1side_menu" }, [
               _vm._m(0),
@@ -70136,7 +70144,19 @@ var render = function() {
                         )
                       ],
                       1
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c("li", [
+                      _c(
+                        "a",
+                        { attrs: { href: "/logout" } },
+                        [
+                          _c("Icon", { attrs: { type: "ios-speedometer" } }),
+                          _vm._v(" Logout")
+                        ],
+                        1
+                      )
+                    ])
                   ])
                 ])
               ])
@@ -88563,8 +88583,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
       data: null,
       deletingIndex: -1,
       isDeleted: false
-    } //delete function
-
+    },
+    //delete function
+    user: false
   },
   getters: {
     getCounter: function getCounter(state) {
@@ -88593,8 +88614,11 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
     },
     setDeletingModalObj: function setDeletingModalObj(state, data) {
       state.deleteModalObj = data;
-    } //delete function
-
+    },
+    //delete function
+    updateUser: function updateUser(state, data) {
+      state.user = data;
+    }
   },
   actions: {
     changeCounterAction: function changeCounterAction(_ref, data) {

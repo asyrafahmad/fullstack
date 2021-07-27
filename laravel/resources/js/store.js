@@ -15,6 +15,7 @@ export default new Vuex.Store({
             isDeleted: false
         },
         //delete function
+        user: false,
     },
     getters: {
         getCounter(state) {
@@ -26,6 +27,7 @@ export default new Vuex.Store({
             return state.deleteModalObj
         }
         //delete function
+
     },
 
     mutations: {
@@ -49,6 +51,10 @@ export default new Vuex.Store({
             state.deleteModalObj = data;
         },
         //delete function
+
+        updateUser(state, data) {
+            state.user = data;
+        }
     },
 
     actions: {

@@ -32,7 +32,12 @@ Route::post('app/edit_user', 'AdminController@editUser');
 Route::post('app/admin_login', 'AdminController@adminLogin');
 
 
-Route::get('/new', 'TestController@controllerMethod');
-Route::any('{slug}', function () {
-    return view('welcome');
-});
+Route::get('/logout', 'AdminController@logout');
+Route::get('/', 'AdminController@index');
+Route::any('{slug}', 'AdminController@index');
+
+
+// Route::get('/new', 'TestController@controllerMethod');
+// Route::any('{slug}', function () {
+//     return view('welcome');
+// });

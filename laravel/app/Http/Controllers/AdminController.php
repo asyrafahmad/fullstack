@@ -10,6 +10,36 @@ use App\User;
 
 class AdminController extends Controller
 {
+    public function index(Request $request)
+    {
+        // first check if you are loggedin and admin user ...
+        // return Auth::check();
+        if (!Auth::check() && $request->path() != 'login') {
+            return redirect('/login');
+        }
+
+        if (!Auth::check() && $request->path() == 'login') {
+            return view('welcome');
+        }
+
+        // you already logged in... so check for it you are admin user///
+        $user = Auth::user();
+        if ($user->userType == 'User') {
+            return redirect('/login');
+        }
+
+        if ($request->path() == 'login') {                              // to get login successfully
+            return redirect('/');
+        }
+        return view('welcome');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
+    }
+
     public function addTag(Request $request)
     {
         //validate request
@@ -193,6 +223,16 @@ class AdminController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+
+            $user = Auth::user();
+
+            if ($user->userType == 'User') {
+                Auth::logout();
+                return response()->json([
+                    'msg' => 'Incorrect login details',
+                ], 401);
+            }
+
             return response()->json([
                 'msg' => 'You are logged in',
             ]);
