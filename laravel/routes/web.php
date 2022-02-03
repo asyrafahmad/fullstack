@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::post('app/create_tag', 'AdminController@addTag');
+Route::get('app/get_tags', 'AdminController@getTag');
+Route::post('app/edit_tag', 'AdminController@editTag');
+Route::post('app/delete_tag', 'AdminController@deleteTag');
+Route::post('app/upload', 'AdminController@upload');
+
+Route::get('/new', 'TestController@controllerMethod');
+
+Route::any('{slug}', function () {
     return view('welcome');
 });
